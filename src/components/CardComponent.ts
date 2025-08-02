@@ -1,7 +1,7 @@
 import { Card, cardSuits } from "../models/card";
 
 //extends HTMLElement vai transformar essa classe em um componente customizado do HTML, vai herdar as caracteristicas de HTML.
-class CardComponent extends HTMLElement {
+export class CardComponent extends HTMLElement {
   static get observedAttributes() {
     return ["selected"]; // Diz ao navegador para ficar de olho no atributo 'selected'
   }

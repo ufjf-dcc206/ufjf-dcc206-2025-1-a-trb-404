@@ -1,7 +1,4 @@
-/**
- * @enum cardSuits
- * @description enumeração dos naipes das cartas
- */
+
 /** criei essa enumeração dos naipes das carta pra usar no cardcomponents */
 export enum cardSuits {
   Copas = "copas",
@@ -10,10 +7,6 @@ export enum cardSuits {
   Espada = "espada",
 }
 
-/**
- * @enum cardValues
- * @description enumeração pra colocar o valor das cartas
- */
 // defini os valores das cartas como strings, pois por exemplo, o valor '10' é uma string na carte e não um número inteiro que daria pra somar (isso vai ser feito depois com o parseInt).
 export enum cardValues {
   Dois = "2",
@@ -30,11 +23,7 @@ export enum cardValues {
   Rei = "K",
   As = "A",
 }
-/**
- * @class card
- * @description vai representar a carta com seu valor e naipe
- * @property {cardSuits} suit - naipe da carta(copas, ouro, paus, espada)
- */
+/** Classe que representa uma carta de baralho */
 export class Card {
   // as props suit e value são do tipo cardSuits e cardValues, respectivamente, que são os enums que definimos acima.
   // isso garante que só possamos usar valores válidos desses enums ao criar uma carta.
@@ -44,25 +33,17 @@ export class Card {
    *é importante usar pq uma carta não muda depois de ser criada, então não faz sentido mudar o valor ou o naipe dela depois de criada. Um 2 de copas sempre vai ser 2 de copas. E impede tambem que outras partes do código mudem esses valores acidentalmente.
    */
 
-  /* @property {cardValues} value - valor da carta(2, 3,etc.)*/
   readonly suit: cardSuits;
   /**
     cardSuit aqui significa que suit deve ser um dos valores do enum cardSuits.
  */
-  /** @constructor
-   * @param {cardValues} value - valor da carta
-   * @param {cardSuits} suit - naipe da carta
-   * @description construtor da classe card, que recebe o valor e o naipe da carta
-   */
+  //cardvalues e cardsuits são os tipos das props value e suit, respectivamente. Isso garante que só possamos usar valores válidos desses enums ao criar uma carta.
   constructor(value: cardValues, suit: cardSuits) {
     this.value = value; //prop value desse objeto vai receber o valor passado no construtor
     this.suit = suit; //prop suit desse objeto vai receber o naipe passado no construtor
   }
 
-  /** @method get numberValue
-   * @description método que retorna o valor numérico da carta pra calcular os pontos
-   * @return {number} - valor numérico da carta
-   */
+  //essa fuuncao retorna o valor numérico da carta, que é usado para calcular a pontuação no jogo.
   get numberValue(): number {
     switch (this.value) {
       case cardValues.Valete:
@@ -77,11 +58,8 @@ export class Card {
     }
   }
   /** o get aqui permite que acesse como fosse uma prop, e ele nao recebe param e retorna um numero */
-  /**
-   * @method toString
-   * @description método que retorna uma string representando a carta(ex: "2 de copas")
-   * @return {string} - string representando a carta
-   */
+
+  //essa funcao retorna uma string que representa a carta, como "2 de copas" ou "A de espadas".
   toString(): string {
     return `${this.value} de ${this.suit}`; //retorna uma string com o valor e o naipe da carta
   }
