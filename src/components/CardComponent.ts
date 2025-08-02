@@ -38,7 +38,7 @@ export class CardComponent extends HTMLElement {
   set isSelected(selectState: boolean) {
     if (this.isSelected !== selectState) {
       //so faz alguma coisa se mudar
-      this.isSelected = selectState;
+      this._isSelected = selectState;
       if (this.isSelected) {
         this.setAttribute("selected", ""); //adiciona o atributo selected  no HTML
       } else {
@@ -55,7 +55,7 @@ export class CardComponent extends HTMLElement {
 
   connectedCallback() {
     this.isSelected = this.hasAttribute("selected"); // Verifica se o atributo 'selected' está presente
-    if (this._card) {
+    if (!this._card) {
       this.classList.add("empty-card");
     } else {
       this.classList.remove("empty-card");
@@ -69,74 +69,89 @@ export class CardComponent extends HTMLElement {
       this.isSelected = this.hasAttribute("selected");
     }
   }
-//Sincroniza o estado interno quando o atributo selected muda.
+  //Sincroniza o estado interno quando o atributo selected muda.
 
-  private toggleSelect(){
-    if(!this._card) return; // faz nada se tiver vazio
+  private toggleSelect = () => {
+    if (!this._card) return; // faz nada se tiver vazio
     this.isSelected = !this.isSelected; // Inverte o estado de seleção, ex se for true vira false e vice-versa
-    this.dispatchEvent( new CustomEvent('card-selected', {
-      detail: { card: this._card, isSelected: this.isSelected }, //é onde empacota os dados que quer enviar junto com o evento
-      bubbles: true, // permite que o evento suba na árvore DOM
-      composed: true //isso aqui deixa atingir fora do shadow dom
-    }));
+    this.dispatchEvent(
+      new CustomEvent("card-selected", {
+        detail: { card: this._card, isSelected: this.isSelected }, //é onde empacota os dados que quer enviar junto com o evento
+        bubbles: true, // permite que o evento suba na árvore DOM
+        composed: true, //isso aqui deixa atingir fora do shadow dom
+      })
+    );
+  };
+  //dispara evento com os detalhes da carta e seu estado de seleção
+
+  private loadStyles() {
+    const styleLink = document.createElement("link");
+    styleLink.setAttribute("rel", "stylesheet");
+    styleLink.setAttribute("href", "./components/card-component.css"); // Caminho para o arquivo CSS de exemplo ainda ja que nao temos
+    this.shadowRoot?.appendChild(styleLink);
   }
-//dispara evento com os detalhes da carta e seu estado de seleção
+  //cria um elemento html link, define o rel como stylesheet, e por ultimo adiciona esse elemento link no shadow DOM do componente
 
-    private loadStyles() {
-        const styleLink = document.createElement('link');
-        styleLink.setAttribute('rel', 'stylesheet');
-        styleLink.setAttribute('href', './components/card-component.css'); // Caminho para o arquivo CSS de exemplo ainda ja que nao temos
-        this.shadowRoot?.appendChild(styleLink);
+  render() {
+    if (!this.shadowRoot) return; // se nao tiver shadow root, nao faz nada
+    const existingContent = this.shadowRoot.querySelector(
+      ".card-content-wrapper"
+    );
+    if (existingContent) {
+      existingContent.remove();
     }
-    //cria um elemento html link, define o rel como stylesheet, e por ultimo adiciona esse elemento link no shadow DOM do componente
+    //limpa o conteúdo existente parta evitar duplicação
 
-    render(){
-        if(!this.shadowRoot) return; // se nao tiver shadow root, nao faz nada
-        const existingContent = this.shadowRoot.querySelector('.card-content-wrapper');
-        if (existingContent) {
-            existingContent.remove();
-        }
-        //limpa o conteúdo existente parta evitar duplicação
+    const contentWrapper = document.createElement("div");
+    contentWrapper.classList.add("card-content-wrapper");
+    //cria um elemento div e adiciona a classe contentWrapper
 
-        const contentWrapper = document.createElement('div');
-        contentWrapper.classList.add('card-content-wrapper');
-        //cria um elemento div e adiciona a classe contentWrapper
-
-        if (!this._card) {
-            contentWrapper.innerHTML = `
+    if (!this._card) {
+      contentWrapper.innerHTML = `
             <div class ="card-back-placeholder">
                 Baralho<br/>Vazio
             </div>
             `;
-            //se nao tiver carta, mostra a mensagem de baralho vazio
-            this.shadowRoot.appendChild(contentWrapper);
-            return; // termina a função aq
-        }
-        
+      //se nao tiver carta, mostra a mensagem de baralho vazio
+      this.shadowRoot.appendChild(contentWrapper);
+      return; // termina a função aq
+    }
 
-        const value = this._card.value; // pega o valor da carta
-        const suit = this._card.suit; // pega o naipe da carta
+    const value = this._card.value; // pega o valor da carta
+    const suit = this._card.suit; // pega o naipe da carta
 
-        const suitColorClass = (suit === cardSuits.Copas || suit === cardSuits.Ouro) ? 'red-suit' : 'black-suit'; //determina cor do naipe
-        
-        let suitSymbol = '';
-        switch (suit) {
-            case cardSuits.Copas: suitSymbol = '♥'; break;
-            case cardSuits.Ouro: suitSymbol = '♦'; break;
-            case cardSuits.Paus: suitSymbol = '♣'; break;
-            case cardSuits.Espada: suitSymbol = '♠'; break;
-            default: suitSymbol = '';
-        }
+    const suitColorClass =
+      suit === cardSuits.Copas || suit === cardSuits.Ouro
+        ? "red-suit"
+        : "black-suit"; //determina cor do naipe
 
-        contentWrapper.innerHTML = `
+    let suitSymbol = "";
+    switch (suit) {
+      case cardSuits.Copas:
+        suitSymbol = "♥";
+        break;
+      case cardSuits.Ouro:
+        suitSymbol = "♦";
+        break;
+      case cardSuits.Paus:
+        suitSymbol = "♣";
+        break;
+      case cardSuits.Espada:
+        suitSymbol = "♠";
+        break;
+      default:
+        suitSymbol = "";
+    }
+
+    contentWrapper.innerHTML = `
             <div class="card-content">
                 <div class="card-value-top ${suitColorClass}">${value}</div>
                 <div class="card-suit-center ${suitColorClass}">${suitSymbol}</div>
                 <div class="card-value-bottom ${suitColorClass}">${value}</div>
             </div>
         `;
-        //vai criar um html com os valores e naipes
-        this.shadowRoot.appendChild(contentWrapper); // adiciona o HTML ao Shadow DOM
-    }
+    //vai criar um html com os valores e naipes
+    this.shadowRoot.appendChild(contentWrapper); // adiciona o HTML ao Shadow DOM
+  }
 }
-customElements.define('ice-card', CardComponent); // Registra o componente no navegador
+customElements.define("ice-card", CardComponent); // Registra o componente no navegador

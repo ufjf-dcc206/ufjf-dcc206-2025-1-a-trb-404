@@ -1,5 +1,5 @@
 import { Deck } from "../models/Deck";
-import { Card } from "../models/card";
+import type { CardComponent } from "./CardComponent";
 
 class DeckComponent extends HTMLElement {
   // criação do barlho
@@ -47,10 +47,8 @@ class DeckComponent extends HTMLElement {
     if (!card) return;
 
     // cria o elemento visual da carta e passa os atributos necessários
-    const cardEl = document.createElement("playing-card");
-    cardEl.setAttribute("rank", card.rank);
-    cardEl.setAttribute("suit", card.suit);
-
+    const cardEl = document.createElement("ice-card") as CardComponent;
+    cardEl.card = card; // define o objeto card diretamente, se suportado
     // a carta é renderizada na tela
     deckArea.appendChild(cardEl);
   }
