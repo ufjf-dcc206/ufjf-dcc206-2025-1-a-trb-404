@@ -40,17 +40,18 @@ class DeckComponent extends HTMLElement {
   }
 
   drawCard() {
-    const deckArea = this.shadowRoot!.getElementById("deckArea")!;
-
-    // se não tiver mais cartas no baralho após uma pedida, nada acontece
+    // se o baralho tiver vazio, não faz nada
     const card = this.deck.draw(1)[0];
     if (!card) return;
 
-    // cria o elemento visual da carta e passa os atributos necessários
-    const cardEl = document.createElement("ice-card") as CardComponent;
-    cardEl.card = card; // define o objeto card diretamente, se suportado
-    // a carta é renderizada na tela
-    deckArea.appendChild(cardEl);
+    // dispara um evento dizendo qual carta foi sacada, para que outros componentes possam lidar com isso
+    this.dispatchEvent(
+      new CustomEvent("card-drawn", {
+        detail: { card },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 }
 

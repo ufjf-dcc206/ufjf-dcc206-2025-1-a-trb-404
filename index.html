@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ICElatro</title>
+    <title>Teste Baralho & Mão</title>
+    <link rel="stylesheet" href="./src/styles/main.css" />
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <!-- Componente visual que representa o baralho -->
+    <deck-component></deck-component>
+
+    <!-- Componente visual que representa a mão do jogador -->
+    <ice-hand max-selected="3"></ice-hand>
+
+    <!-- Registro dos web components -->
+    <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
